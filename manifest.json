@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Tall Screenshot – Full Page & Custom Length",
+  "short_name": "Tall Screenshot",
+  "version": "1.0.0",
+  "description": "Full-page and custom-length screenshots with a crop editor, plus a color picker and an on-page ruler.",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Tall Screenshot",
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
+  "commands": {
+    "capture-full": {
+      "suggested_key": { "default": "Alt+Shift+F" },
+      "description": "Capture full page (Esc to stop early)"
+    },
+    "capture-select": {
+      "suggested_key": { "default": "Alt+Shift+S" },
+      "description": "Select an area (scrolls past the screen)"
+    },
+    "capture-visible": {
+      "suggested_key": { "default": "Alt+Shift+V" },
+      "description": "Capture visible area"
+    },
+    "pick-color": {
+      "suggested_key": { "default": "Alt+Shift+C" },
+      "description": "Pick a color from the page"
+    },
+    "measure": {
+      "description": "Measure distances and element sizes"
+    }
+  }
+}

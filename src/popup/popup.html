@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tall Screenshot</title>
+  <link rel="stylesheet" href="popup.css">
+  <script src="../color.js"></script>
+  <script type="module" src="popup.js"></script>
+</head>
+<body>
+  <div id="main">
+    <header>
+      <img src="../../icons/icon32.png" width="22" height="22" alt="">
+      <h1>Tall Screenshot</h1>
+    </header>
+
+    <p class="banner" id="blocked" hidden></p>
+
+    <div class="actions">
+      <button class="action" data-mode="full">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 7.5v8m-3-3 3 3 3-3"/></svg>
+        <span class="txt"><b>Full page</b><small>Scrolls for you · stop whenever you like</small></span>
+        <kbd data-cmd="capture-full" hidden></kbd>
+      </button>
+      <button class="action" data-mode="select">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8m8 0h2.5A1.5 1.5 0 0 1 20 5.5V8m0 8v2.5a1.5 1.5 0 0 1-1.5 1.5H16m-8 0H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M12 9v6m-3-3h6"/></svg>
+        <span class="txt"><b>Select area</b><small>Drag past the bottom edge to go taller</small></span>
+        <kbd data-cmd="capture-select" hidden></kbd>
+      </button>
+      <button class="action" data-mode="visible">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 9h18"/></svg>
+        <span class="txt"><b>Visible area</b><small>Just what's on screen</small></span>
+        <kbd data-cmd="capture-visible" hidden></kbd>
+      </button>
+    </div>
+
+    <section class="custom">
+      <div class="label">Custom length</div>
+      <div class="row">
+        <input id="customValue" type="number" min="0.1" step="any" inputmode="decimal" aria-label="Length">
+        <select id="customUnit" aria-label="Unit">
+          <option value="screens">screens</option>
+          <option value="px">px</option>
+        </select>
+        <select id="customFrom" aria-label="Start from">
+          <option value="top">from top</option>
+          <option value="here">from here</option>
+        </select>
+        <button id="customGo" class="go">Capture</button>
+      </div>
+    </section>
+
+    <section class="tools">
+      <div class="label">Tools</div>
+      <div class="tool-row">
+        <button class="tool" data-mode="color" title="Pick a color from the page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 6.5 3 3"/><path d="M17.8 3.2a2.1 2.1 0 0 1 3 3l-2.3 2.3-3-3z"/><path d="m15.5 5.5-10 10a2 2 0 0 0-.5 1V19h2.5a2 2 0 0 0 1-.5l10-10"/></svg>
+          <span>Pick color</span>
+          <kbd data-cmd="pick-color" hidden></kbd>
+        </button>
+        <button class="tool" data-mode="measure" title="Measure distances, boxes and element sizes">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M6.5 8v3m4-3v4.5m4-4.5v3m4-3v4.5"/></svg>
+          <span>Measure</span>
+          <kbd data-cmd="measure" hidden></kbd>
+        </button>
+      </div>
+      <div class="history" id="history" hidden>
+        <div class="history-head"><span>Recent colors · click to copy</span><button class="link" id="clearColors">Clear</button></div>
+        <div class="swatches" id="swatches"></div>
+      </div>
+    </section>
+
+    <details id="settings">
+      <summary>Settings</summary>
+      <label class="toggle">
+        <span><b>Hide repeating headers</b><small>Fixed and sticky bars appear once, not on every screen.</small></span>
+        <input type="checkbox" id="hideFixed"><i class="switch"></i>
+      </label>
+      <label class="field"><span>Max full-page length</span><span class="unit"><input id="maxHeight" type="number" min="1000" max="200000" step="1000"> px</span></label>
+      <label class="field"><span>Extra wait per screen <small>(slow-loading sites)</small></span><span class="unit"><input id="delay" type="number" min="0" max="5000" step="50"> ms</span></label>
+      <label class="field"><span>Copy colors as</span>
+        <select id="colorFormat">
+          <option value="hex">HEX  #7C3AED</option>
+          <option value="rgb">RGB  rgb(124, 58, 237)</option>
+          <option value="hsl">HSL  hsl(262, 83%, 58%)</option>
+        </select>
+      </label>
+      <button class="link" id="shortcuts">Change keyboard shortcuts →</button>
+    </details>
+
+    <p class="banner error" id="error" hidden></p>
+  </div>
+  <div class="mini-toast" id="miniToast" role="status" aria-live="polite"></div>
+
+  <div id="progress" hidden>
+    <div class="p-head"><span class="rec"></span><span id="pTitle">Capturing</span></div>
+    <div class="p-len" id="pLen">0 px</div>
+    <div class="bar"><div id="pBar"></div></div>
+    <div class="p-sub" id="pSub">Scrolling automatically…</div>
+    <div class="p-actions">
+      <button id="stopBtn" class="go">Stop here &amp; edit</button>
+      <button id="abortBtn" class="ghost">Cancel</button>
+    </div>
+    <div class="p-hint">Esc also stops · or click the toolbar icon</div>
+  </div>
+</body>
+</html>

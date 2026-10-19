@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Screenshot · Tall Screenshot</title>
+  <link rel="icon" href="../../icons/icon32.png">
+  <link rel="stylesheet" href="editor.css">
+  <script type="module" src="editor.js"></script>
+</head>
+<body>
+  <header class="bar">
+    <div class="brand">
+      <img src="../../icons/icon32.png" width="24" height="24" alt="">
+      <div class="meta">
+        <div class="title" id="title">Loading…</div>
+        <div class="sub" id="sub"></div>
+      </div>
+    </div>
+    <div class="tools">
+      <button class="btn" id="cropBtn" title="Crop (C)" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>
+        <span>Crop</span>
+      </button>
+      <button class="btn icon" id="undoBtn" title="Undo (Ctrl+Z)" aria-label="Undo" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      </button>
+      <div class="sep"></div>
+      <div class="zoom">
+        <button class="btn icon" id="zoomOut" title="Zoom out (−)" aria-label="Zoom out">−</button>
+        <button class="btn zl" id="zoomLabel" title="Toggle fit / 100% (0)">Fit</button>
+        <button class="btn icon" id="zoomIn" title="Zoom in (+)" aria-label="Zoom in">+</button>
+      </div>
+      <div class="sep"></div>
+      <select id="format" aria-label="File format" title="File format">
+        <option value="png">PNG</option>
+        <option value="jpeg">JPG</option>
+        <option value="webp">WebP</option>
+      </select>
+      <button class="btn" id="copyBtn" title="Copy to clipboard (Ctrl+C)" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>
+        <span>Copy</span>
+      </button>
+      <button class="btn primary" id="saveBtn" title="Download (Ctrl+S)" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        <span>Download</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="cropbar" id="cropbar" hidden>
+    <div class="fields">
+      <label>X<input id="cx" type="number" min="0"></label>
+      <label>Y<input id="cy" type="number" min="0"></label>
+      <label>W<input id="cw" type="number" min="1"></label>
+      <label>H<input id="ch" type="number" min="1"></label>
+    </div>
+    <span class="hint">Drag the handles or draw a new box · drag near the edge to scroll · <kbd>Enter</kbd> apply · <kbd>Esc</kbd> cancel</span>
+    <div class="cropactions">
+      <button class="btn" id="cropCancel">Cancel</button>
+      <button class="btn primary" id="cropApply">Apply crop</button>
+    </div>
+  </div>
+
+  <p class="notice" id="notice" hidden></p>
+
+  <main class="stage" id="stage">
+    <div class="status" id="status"><div class="spinner"></div><span id="statusText">Stitching screenshot…</span></div>
+    <div class="wrap" id="wrap" hidden>
+      <div class="croplayer" id="croplayer" hidden>
+        <div class="shade" id="shadeT"></div>
+        <div class="shade" id="shadeB"></div>
+        <div class="shade" id="shadeL"></div>
+        <div class="shade" id="shadeR"></div>
+        <div class="cropbox" id="cropbox" data-h="move">
+          <span class="dims" id="dims"></span>
+          <i data-h="nw"></i><i data-h="n"></i><i data-h="ne"></i><i data-h="e"></i>
+          <i data-h="se"></i><i data-h="s"></i><i data-h="sw"></i><i data-h="w"></i>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
