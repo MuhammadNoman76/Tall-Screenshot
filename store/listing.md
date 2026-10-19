@@ -58,10 +58,13 @@ Keyboard shortcuts: Alt+Shift+F (full page), Alt+Shift+S (select area), Alt+Shif
 
 | Field | File |
 | --- | --- |
-| Store icon (128×128) | `../icons/icon128.png` |
-| Screenshots (1280×800) | `screenshot-1.png` … `screenshot-5.png` |
-| Small promo tile (440×280) | `promo-small-440x280.png` |
-| Marquee (1400×560) | optional — skip |
+| Store icon (128×128) | `store-icon-128.png` |
+| Screenshots (1280×800, 24-bit PNG) | `screenshot-1.png` … `screenshot-5.png` |
+| Small promo tile (440×280, 24-bit PNG) | `promo-small-440x280.png` |
+| Marquee promo tile (1400×560, 24-bit PNG) | `promo-marquee-1400x560.png` |
+| Global promo video | optional, leave empty |
+
+**Additional fields:** Official URL: None · Homepage URL and Support URL below · Mature content: off.
 
 **Homepage URL:** https://github.com/MuhammadNoman76/Tall-Screenshot  
 **Support URL:** https://github.com/MuhammadNoman76/Tall-Screenshot/issues
