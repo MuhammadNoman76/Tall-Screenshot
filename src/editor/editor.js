@@ -133,11 +133,13 @@ async function show(region, { push = true } = {}) {
   $('wrap').prepend(canvas);
   $('undoBtn').disabled = state.regions.length < 2;
   $('sub').textContent = `${canvas.width.toLocaleString()} × ${canvas.height.toLocaleString()} px · ${hostOf(state.session.url)}`;
-  const reduced = scale < state.captureScale - 1e-3;
-  $('notice').hidden = !reduced;
-  if (reduced) {
-    $('notice').textContent = `This capture is taller than the browser's image size limit, so it's saved at ${Math.round((scale / state.captureScale) * 100)}% resolution. Crop to a smaller area to get full resolution back.`;
+  const notes = [];
+  if (state.session.note) notes.push(state.session.note);
+  if (scale < state.captureScale - 1e-3) {
+    notes.push(`This capture is taller than the browser's image size limit, so it's saved at ${Math.round((scale / state.captureScale) * 100)}% resolution. Crop to a smaller area to get full resolution back.`);
   }
+  $('notice').textContent = notes.join(' ');
+  $('notice').hidden = !notes.length;
   applyZoom();
 }
 

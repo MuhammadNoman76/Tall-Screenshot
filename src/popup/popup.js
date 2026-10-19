@@ -25,13 +25,43 @@ async function init() {
     kbd.hidden = !shortcut;
   }
 
-  const reason = blockedReason(tab?.url);
-  if (reason) {
-    $('blocked').textContent = reason;
-    $('blocked').hidden = false;
-    for (const b of document.querySelectorAll('.action, .tool, #customGo')) b.disabled = true;
+  if (tab) await showPageAccess(tab);
+}
+
+// Chrome protects some pages from extensions. Say what still works there.
+async function showPageAccess(tab) {
+  const url = tab.url || ''; // Chrome hides the URL of its own pages from extensions
+  let text = '';
+  let keep = null; // selector of buttons that stay enabled; null = all
+  if (/^file:/i.test(url) && !(await chrome.extension.isAllowedFileSchemeAccess())) {
+    text = 'To use Tall Screenshot on files from your computer, turn on "Allow access to file URLs" in its settings.';
+    $('fixAccess').hidden = false;
+  } else if (/^(view-source|about|devtools):/i.test(url)) {
+    text = "Chrome doesn't let extensions capture this kind of page.";
+    keep = ':not(*)'; // nothing
+  } else if (!(await canRunOn(tab.id))) {
+    text = "Chrome protects this page (the Web Store and browser pages), so no extension can scroll it or draw on it. You can still capture what's on screen with Visible area.";
+    keep = '[data-mode="visible"]';
+  }
+  if (!text) return;
+  $('blockedText').textContent = text;
+  $('blocked').hidden = false;
+  if (keep) {
+    for (const b of document.querySelectorAll('.action, .tool, #customGo')) b.disabled = !b.matches(keep);
   }
 }
+
+// Asking Chrome directly is the only reliable test: protected pages vary by version.
+async function canRunOn(tabId) {
+  try {
+    await chrome.scripting.executeScript({ target: { tabId }, func: () => true });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+$('fixAccess').addEventListener('click', () => chrome.tabs.create({ url: `chrome://extensions/?id=${chrome.runtime.id}` }));
 
 // ---------------------------------------------------------------- capture
 
@@ -185,13 +215,3 @@ function showError(text) {
   $('error').hidden = false;
 }
 
-function blockedReason(url) {
-  if (!url) return '';
-  if (/^(chrome|edge|brave|opera|vivaldi|about|chrome-extension|devtools|view-source|chrome-search|chrome-untrusted):/i.test(url)) {
-    return "The browser doesn't let extensions capture this page. Open a regular website to take a screenshot.";
-  }
-  if (/^https:\/\/(chromewebstore\.google\.com|chrome\.google\.com\/webstore|microsoftedge\.microsoft\.com\/addons)/i.test(url)) {
-    return 'The extension store blocks screenshots by extensions.';
-  }
-  return '';
-}

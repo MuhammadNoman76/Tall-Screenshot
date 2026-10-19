@@ -451,6 +451,12 @@
     try {
       let scroller;
       let region;
+      let note;
+      // PDFs scroll inside Chrome's built-in viewer, which extensions can't control.
+      if (document.contentType === 'application/pdf' && (mode === 'full' || mode === 'custom')) {
+        mode = 'visible';
+        note = "PDFs scroll inside Chrome's built-in viewer, which extensions can't control, so only the visible part was captured.";
+      }
       if (mode === 'select') {
         const sel = await selectArea();
         if (!sel) {
@@ -477,7 +483,7 @@
         notify({ type: 'tss:cancelled', sid });
         return;
       }
-      notify({ type: 'tss:done', sid, ...res, title: document.title, url: location.href });
+      notify({ type: 'tss:done', sid, ...res, note, title: document.title, url: location.href });
     } catch (err) {
       notify(err === CANCELLED
         ? { type: 'tss:cancelled', sid }

@@ -51,6 +51,19 @@ Everything above is also in the right-click menu under **Tall Screenshot**.
 - For very slow sites, raise *Extra wait per screen* in *Settings*.
 - Very tall captures are scaled down to fit the browser's image size limit (about 32,000 px). The editor tells you when this happens. Cropping a smaller part brings back full resolution.
 
+## Protected pages
+
+Chrome protects some pages from **all** extensions. No extension can scroll them or draw on them. Tall Screenshot does what Chrome allows on each:
+
+| Page | What works |
+| --- | --- |
+| Normal websites, local files* | Everything |
+| PDFs | Visible area, select area and the tools (the PDF itself scrolls inside Chrome's viewer, which extensions can't control) |
+| Chrome Web Store (including the Developer Dashboard), `chrome://` pages, new tab page, `data:` pages | Visible area. Full page, select area and custom length capture the visible part instead, and the editor says so |
+| `view-source:` pages, blank tabs | Nothing. Chrome blocks screenshots there |
+
+\*For files opened from your computer, turn on **Allow access to file URLs** under Tall Screenshot in `chrome://extensions`. The popup shows a shortcut to that setting.
+
 ## Privacy
 
 Everything stays on your computer. Nothing is uploaded, and there is no analytics or tracking. See [PRIVACY.md](PRIVACY.md).

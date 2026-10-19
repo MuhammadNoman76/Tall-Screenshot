@@ -120,6 +120,7 @@ const handlers = {
         frames: msg.frames,
         title: msg.title,
         url: msg.url,
+        note: msg.note,
       });
     } catch (e) {
       await endCapture(tab.id, msg.sid);
@@ -127,11 +128,7 @@ const handlers = {
       throw e;
     }
     await endCapture(tab.id);
-    await chrome.tabs.create({
-      url: chrome.runtime.getURL(`src/editor/editor.html?s=${msg.sid}`),
-      index: tab.index + 1,
-      openerTabId: tab.id,
-    });
+    await openEditor(tab, msg.sid);
   },
 
   async 'tss:cancelled'(msg, sender) {
@@ -169,7 +166,9 @@ async function start(tab, mode, opts, source) {
   try {
     await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['src/content.js'] });
   } catch (e) {
-    throw new Error(injectError(tab.url, e));
+    // Chrome won't let extensions script some pages (the Web Store, chrome:// pages,
+    // data: URLs), but usually still allows a plain screenshot of what's on screen.
+    return captureVisibleOnly(tab, mode, e);
   }
   // An open color picker or ruler would end up in the screenshot.
   await chrome.tabs.sendMessage(tab.id, { type: 'tss:tool-exit' }).catch(() => {});
@@ -202,11 +201,53 @@ async function start(tab, mode, opts, source) {
   return { ok: true, sid };
 }
 
+// Screenshot without any script in the page: no scrolling, just what's on screen.
+async function captureVisibleOnly(tab, mode, injectFailure) {
+  let dataUrl;
+  try {
+    dataUrl = await captureVisible(tab.windowId);
+  } catch {
+    throw new Error(injectError(tab.url, injectFailure));
+  }
+  const blob = await (await fetch(dataUrl)).blob();
+  const dv = new DataView(await blob.slice(16, 24).arrayBuffer()); // PNG IHDR width/height
+  const imgW = dv.getUint32(0);
+  const imgH = dv.getUint32(4);
+  // The tab's size is in CSS pixels, which recovers the display scale (125%, 150%…).
+  const w = tab.width || imgW;
+  const h = imgH * (w / imgW);
+  const vp = { iw: w, ih: h, cw: w, ch: h, dpr: imgW / w };
+  const sid = crypto.randomUUID();
+  await putFrame({ sid, i: 0, blob, crop: { x: 0, y: 0, w, h }, dest: { x: 0, y: 0 }, vp });
+  await putSession({
+    sid,
+    status: 'ready',
+    created: Date.now(),
+    w,
+    h,
+    frames: 1,
+    title: tab.title,
+    url: tab.url,
+    note: mode === 'visible' ? undefined : "Chrome doesn't let extensions scroll this page, so only the visible part was captured. You can crop it here.",
+  });
+  prune().catch(() => {});
+  await openEditor(tab, sid);
+  return { ok: true, sid, visibleOnly: true };
+}
+
+function openEditor(tab, sid) {
+  return chrome.tabs.create({
+    url: chrome.runtime.getURL(`src/editor/editor.html?s=${sid}`),
+    index: tab.index + 1,
+    openerTabId: tab.id,
+  });
+}
+
 async function startTool(tab, tool) {
   try {
     await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['src/color.js', 'src/inspect.js'] });
   } catch (e) {
-    throw new Error(injectError(tab.url, e));
+    throw new Error(injectError(tab.url, e, true));
   }
   const settings = await loadSettings();
   const res = await chrome.tabs.sendMessage(tab.id, { type: 'tss:tool', tool, settings }).catch((e) => ({ error: e.message }));
@@ -262,13 +303,15 @@ function flagError(tabId, message) {
   }, 8000);
 }
 
-function injectError(url = '', err) {
+function injectError(url = '', err, tool = false) {
   if (/^file:/i.test(url)) {
-    return 'To capture local files, turn on "Allow access to file URLs" for Tall Screenshot in chrome://extensions.';
+    return 'To use Tall Screenshot on files from your computer, turn on "Allow access to file URLs" for it in chrome://extensions.';
   }
-  if (/^(chrome|edge|brave|opera|vivaldi|about|chrome-extension|devtools|view-source|chrome-search|chrome-untrusted):/i.test(url)
-    || /^https:\/\/(chromewebstore\.google\.com|chrome\.google\.com\/webstore|microsoftedge\.microsoft\.com\/addons)/i.test(url)) {
-    return "The browser doesn't let extensions capture this page. Try a regular website.";
+  if (tool) {
+    return "Chrome protects this page, so extensions can't draw on it and the color picker and ruler can't run here. A visible-area screenshot still works.";
+  }
+  if (/cannot access|cannot be scripted|chrome:\/\/ url/i.test(err?.message || '')) {
+    return "Chrome doesn't let extensions capture this kind of page (for example view-source: pages and blank tabs).";
   }
   return `This page can't be captured: ${err?.message || err}`;
 }
