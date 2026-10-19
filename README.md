@@ -2,7 +2,7 @@
 
 A fast Chrome extension for long screenshots. It can capture a full page, a length you choose, or an area you drag to any height, and it has a built-in editor to crop, copy and download. It also includes a **color picker** (like ColorZilla) and an **on-page ruler** (like Dimensions).
 
-It works in Chrome, Edge, Brave, Opera, Arc and other Chromium browsers (Manifest V3, Chrome 116+).
+It's tested in Chrome and Microsoft Edge (version 155, Windows 11). Other Chromium browsers such as Brave, Opera and Arc use the same extension system but haven't been tested yet. Manifest V3, Chrome 116 or later.
 
 ![Tall Screenshot](store/screenshot-1.png)
 
@@ -31,7 +31,7 @@ When a capture finishes, the editor opens in a new tab:
 
 ## Tools
 
-**Pick color** (`Alt+Shift+C`): a magnifier follows the mouse and shows the exact pixel under it. Click (or press `Enter`) to copy the color. Arrow keys move one pixel at a time, `Shift` + arrows move 10. Colors are copied as HEX, RGB or HSL (choose under *Settings*). Your recent colors show in the popup; click a swatch to copy it again.
+**Pick color** (`Alt+Shift+E`): a magnifier follows the mouse and shows the exact pixel under it. Click (or press `Enter`) to copy the color. Arrow keys move one pixel at a time, `Shift` + arrows move 10. Colors are copied as HEX, RGB or HSL (choose under *Settings*). Your recent colors show in the popup; click a swatch to copy it again.
 
 **Measure** (set a shortcut at `chrome://extensions/shortcuts`):
 

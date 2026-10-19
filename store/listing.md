@@ -4,7 +4,7 @@ Everything the developer dashboard asks for, in the order it asks.
 
 ## Package
 
-Upload `dist/tall-screenshot-1.0.0.zip` (build it with `scripts/package.ps1`).
+Upload `dist/tall-screenshot-1.0.1.zip` (build it with `scripts/package.ps1`).
 
 ## Store listing tab
 
@@ -51,7 +51,7 @@ SMART CAPTURE
 PRIVATE BY DESIGN
 Everything happens on your computer. No accounts, no uploads, no tracking. The extension can only see the tab you use it on, and only when you ask.
 
-Keyboard shortcuts: Alt+Shift+F (full page), Alt+Shift+S (select area), Alt+Shift+V (visible area), Alt+Shift+C (pick color). Change them at chrome://extensions/shortcuts.
+Keyboard shortcuts: Alt+Shift+F (full page), Alt+Shift+S (select area), Alt+Shift+V (visible area), Alt+Shift+E (pick color). Change them at chrome://extensions/shortcuts.
 ```
 
 **Graphic assets** (all in this folder):

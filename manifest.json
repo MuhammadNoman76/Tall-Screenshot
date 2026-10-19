@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Tall Screenshot – Full Page & Custom Length",
   "short_name": "Tall Screenshot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Full-page and custom-length screenshots with a crop editor, plus a color picker and an on-page ruler.",
   "minimum_chrome_version": "116",
   "icons": {
@@ -38,7 +38,7 @@
       "description": "Capture visible area"
     },
     "pick-color": {
-      "suggested_key": { "default": "Alt+Shift+C" },
+      "suggested_key": { "default": "Alt+Shift+E" },
       "description": "Pick a color from the page"
     },
     "measure": {
